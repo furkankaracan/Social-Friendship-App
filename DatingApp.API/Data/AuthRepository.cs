@@ -19,15 +19,22 @@ namespace DatingApp.API.Data
         #region Repository
         public async Task<User> Login(string userName, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(prm => prm.UserName == userName);
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(prm => prm.UserName == userName);
 
-            if (user == null)
-                return null;
+                if (user == null)
+                    return null;
 
-            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-                return null;
+                if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+                    throw new Exception("Kullanıcı Bulunamadı");
 
-            return user;
+                return user;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
