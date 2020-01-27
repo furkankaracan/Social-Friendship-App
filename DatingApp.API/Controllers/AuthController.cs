@@ -51,6 +51,9 @@ namespace DatingApp.API.Controllers
 
             var userFromRepo = await _repo.Login(userForLoginDto.UserName.ToLowerInvariant(), userForLoginDto.Password);
 
+            if (userFromRepo == null)
+                return Unauthorized();
+
             var token = CreateToken(userFromRepo);
             var tokenHandler = new JwtSecurityTokenHandler();
 
