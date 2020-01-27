@@ -19,44 +19,30 @@ namespace DatingApp.API.Data
         #region Repository
         public async Task<User> Login(string userName, string password)
         {
-            try
-            {
-                var user = await _context.Users.FirstOrDefaultAsync(prm => prm.UserName == userName);
 
-                if (user == null)
-                    return null;
+            var user = await _context.Users.FirstOrDefaultAsync(prm => prm.UserName == userName);
 
-                if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-                    throw new Exception("Kullanıcı Bulunamadı");
+            if (user == null)
+                return null;
 
-                return user;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+                throw new Exception("Kullanıcı Bulunamadı");
+
+            return user;
         }
 
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
-            try
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
             {
-                using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+
+                for (int i = 0; i < computedHash.Length; i++)
                 {
-                    var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-
-                    for (int i = 0; i < computedHash.Length; i++)
-                    {
-                        if (computedHash[i] != passwordHash[i])
-                            return false;
-                    }
-                    return true;
+                    if (computedHash[i] != passwordHash[i])
+                        return false;
                 }
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                return true;
             }
         }
 
@@ -77,19 +63,12 @@ namespace DatingApp.API.Data
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            try
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
-                using (var hmac = new System.Security.Cryptography.HMACSHA512())
-                {
-                    passwordSalt = hmac.Key;
-                    passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                }
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
 
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
         }
 
         public async Task<bool> UserExists(string userName)

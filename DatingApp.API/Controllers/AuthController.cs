@@ -29,49 +29,35 @@ namespace DatingApp.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
-            try
+            userForRegisterDto.UserName = userForRegisterDto.UserName.ToLowerInvariant();
+            if (await _repo.UserExists(userForRegisterDto.UserName))
+                return BadRequest("Username already exists");
+
+            var registeringUser = new User()
             {
-                userForRegisterDto.UserName = userForRegisterDto.UserName.ToLowerInvariant();
-                if (await _repo.UserExists(userForRegisterDto.UserName))
-                    return BadRequest("Username already exists");
+                UserName = userForRegisterDto.UserName
+            };
 
-                var registeringUser = new User()
-                {
-                    UserName = userForRegisterDto.UserName
-                };
+            var createdUser = await _repo.Register(registeringUser, userForRegisterDto.Password);
 
-                var createdUser = await _repo.Register(registeringUser, userForRegisterDto.Password);
-
-                return StatusCode(201);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return StatusCode(201);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
-            try
+            if (userForLoginDto == null)
+                return Unauthorized();
+
+            var userFromRepo = await _repo.Login(userForLoginDto.UserName.ToLowerInvariant(), userForLoginDto.Password);
+
+            var token = CreateToken(userFromRepo);
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            return Ok(new
             {
-                if (userForLoginDto == null)
-                    return Unauthorized();
-
-                var userFromRepo = await _repo.Login(userForLoginDto.UserName.ToLowerInvariant(), userForLoginDto.Password);
-
-                var token = CreateToken(userFromRepo);
-                var tokenHandler = new JwtSecurityTokenHandler();
-
-                return Ok(new
-                {
-                    token = tokenHandler.WriteToken(token)
-                });
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                token = tokenHandler.WriteToken(token)
+            });
         }
 
         public SecurityToken CreateToken(User userFromRepo)
