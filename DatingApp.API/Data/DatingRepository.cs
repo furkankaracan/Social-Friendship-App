@@ -37,9 +37,9 @@ namespace DatingApp.API.Data
             return users;
         }
 
-        public Task<bool> SaveAll()
+        public async Task<bool> SaveAll()
         {
-            throw new System.NotImplementedException();
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }
