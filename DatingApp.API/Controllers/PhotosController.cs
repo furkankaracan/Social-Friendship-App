@@ -70,8 +70,8 @@ namespace DatingApp.API.Controllers
                     uploadResult = _cloudinary.Upload(uploadParams);
                 }
             }
-            else 
-            return BadRequest("Dosya Eklenemedi");
+            else
+                return BadRequest("Dosya Eklenemedi");
 
             photoForCreatingDto.Url = uploadResult.Uri.ToString();
             photoForCreatingDto.PublicId = uploadResult.PublicId;
@@ -90,6 +90,33 @@ namespace DatingApp.API.Controllers
             }
 
             return BadRequest("Could not add the photo");
+        }
+
+        [HttpPost("{id}/setMain")]
+        public async Task<IActionResult> SetMainPhoto(int userId, int id)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var user = await _repo.GetUser(userId);
+
+            if (!user.Photos.Any(p => p.Id == id))
+                return Unauthorized();
+
+            var photofromRepo = await _repo.GetPhoto(id);
+
+            if (photofromRepo.IsMain)
+                return BadRequest("This is already main photo");
+
+            var currentMainPhoto = await _repo.GetMainPhotoForUser(userId);
+            currentMainPhoto.IsMain = false;
+
+            photofromRepo.IsMain = true;
+
+            if (await _repo.SaveAll())
+                return NoContent();
+
+            return BadRequest("Could not set photo to main");
         }
     }
 }

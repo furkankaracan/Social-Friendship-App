@@ -13,3 +13,7 @@
     background-color: #fff;
     border-top: none;
 }
+
+input[type=text] {
+        background: gainsboro;
+}
