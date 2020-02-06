@@ -1,6 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from '../_services/Auth.service';
 import { AlertifyService } from '../_services/alertify.service';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
@@ -10,10 +11,16 @@ import { AlertifyService } from '../_services/alertify.service';
 export class RegisterComponent implements OnInit {
   @Output() cancelRegister = new EventEmitter();
   model: any = {};
+  registerForm: FormGroup;
 
   constructor(private authService: AuthService, private alertify: AlertifyService) { }
 
   ngOnInit() {
+    this.registerForm = new FormGroup({
+      username: new FormControl('', [Validators.required, Validators.minLength(4)]),
+      password: new FormControl('', [Validators.required, Validators.minLength(4)]),
+      confirmpassword: new FormControl('', Validators.required)
+    }, this.passwordMatchValidation);
   }
 
   register() {
@@ -22,6 +29,10 @@ export class RegisterComponent implements OnInit {
     }, error => {
       this.alertify.error(error);
     });
+  }
+
+  passwordMatchValidation(formGroup: FormGroup) {
+    return formGroup.get('password').value === formGroup.get('confirmpassword').value ? null : {'mismatch': true};
   }
 
   cancel() {
