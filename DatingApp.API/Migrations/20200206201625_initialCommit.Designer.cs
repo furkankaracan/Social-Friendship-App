@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatingApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200202115756_AddedPublicId")]
-    partial class AddedPublicId
+    [Migration("20200206201625_initialCommit")]
+    partial class initialCommit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,9 +65,6 @@ namespace DatingApp.API.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreateOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("EmailAddress")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Gender")

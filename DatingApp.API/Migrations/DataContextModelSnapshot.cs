@@ -65,9 +65,6 @@ namespace DatingApp.API.Migrations
                     b.Property<DateTime>("CreateOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("EmailAddress")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Gender")
                         .HasColumnType("TEXT");
 
