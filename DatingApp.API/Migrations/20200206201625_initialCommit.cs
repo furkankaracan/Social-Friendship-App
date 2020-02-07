@@ -19,7 +19,7 @@ namespace DatingApp.API.Migrations
                     Gender = table.Column<string>(nullable: true),
                     BirthDate = table.Column<DateTime>(nullable: false),
                     KnownAs = table.Column<string>(nullable: true),
-                    CreateOn = table.Column<DateTime>(nullable: false),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
                     LastActive = table.Column<DateTime>(nullable: false),
                     Introduction = table.Column<string>(nullable: true),
                     LookingFor = table.Column<string>(nullable: true),

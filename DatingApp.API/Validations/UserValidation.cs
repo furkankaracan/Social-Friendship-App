@@ -4,11 +4,6 @@ namespace DatingApp.API.Validations
 {
     public class UserValidation
     {
-        public bool ValidateEmail(string emailAddress)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool ValidatePassword(string password)
         {
             throw new NotImplementedException();
