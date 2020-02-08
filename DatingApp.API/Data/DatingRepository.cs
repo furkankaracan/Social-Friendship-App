@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,7 +41,26 @@ namespace DatingApp.API.Data
 
         public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-            var users = _context.Users.Include(prm => prm.Photos);
+            var users = _context.Users
+                        .Include(prm => prm.Photos)
+                        .OrderByDescending(prm => prm.LastActive)
+                        .AsQueryable();
+
+            users = users
+                    .Where(prm => prm.Id != userParams.UserId && prm.Gender == userParams.Gender);
+
+            if (userParams.MinAge != 18 && userParams.MaxAge != 99)
+            {
+                var minBirthDate = DateTime.Today.AddYears(-userParams.MaxAge - 1);
+                var maxBirthDate = DateTime.Today.AddYears(-userParams.MinAge);
+
+                users = users.Where(prm => prm.BirthDate >= minBirthDate && prm.BirthDate <= maxBirthDate);
+            }
+
+            if (!string.IsNullOrEmpty(userParams.OrderBy))
+            {
+                users = userParams.OrderBy == "created" ? users.OrderByDescending(prm => prm.CreatedOn) : users.OrderByDescending(prm => prm.LastActive);
+            }
 
             return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }
@@ -50,7 +70,8 @@ namespace DatingApp.API.Data
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<Photo> GetMainPhotoForUser(int userId) {
+        public async Task<Photo> GetMainPhotoForUser(int userId)
+        {
             return await _context.Photos.Where(prm => prm.UserId == userId && prm.IsMain).FirstOrDefaultAsync();
         }
     }
