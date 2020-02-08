@@ -6,6 +6,7 @@ using AutoMapper;
 using DatingApp.API.Data.Repositories;
 using DatingApp.API.Dtos;
 using DatingApp.API.Helpers;
+using DatingApp.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,7 +33,7 @@ namespace DatingApp.API.Controllers
             var userFromRepo = await _repo.GetUser(currentUserId);
             userParams.UserId = currentUserId;
 
-            if(string.IsNullOrEmpty(userParams.Gender))
+            if (string.IsNullOrEmpty(userParams.Gender))
             {
                 userParams.Gender = userFromRepo.Gender == "male" ? "female" : "male";
             }
@@ -45,7 +46,7 @@ namespace DatingApp.API.Controllers
             return Ok(usersToReturn);
         }
 
-        [HttpGet("{id}", Name="GetUser")]
+        [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
             var user = await _repo.GetUser(id);
@@ -59,13 +60,43 @@ namespace DatingApp.API.Controllers
             if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-                var userFromRepo = await _repo.GetUser(id);
-                _mapper.Map(user, userFromRepo);
+            var userFromRepo = await _repo.GetUser(id);
+            _mapper.Map(user, userFromRepo);
 
-                if (await _repo.SaveAll())
+            if (await _repo.SaveAll())
                 return NoContent();
 
-                throw new Exception($"Updating user {id} failed on save");
+            throw new Exception($"Updating user {id} failed on save");
+        }
+
+        [HttpPost("{id}/like/{recipientid}")]
+        public async Task<IActionResult> LikeUser(int id, int recipientid)
+        {
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var like = await _repo.GetLike(id, recipientid);
+
+            if (like != null)
+            {
+                return BadRequest("You already like this user");
+            }
+
+            if (await _repo.GetUser(recipientid) == null)
+                return NotFound();
+
+            like = new Like
+            {
+                LikerId = id,
+                LikeeId = recipientid
+            };
+
+            _repo.Add<Like>(like);
+
+            if (await _repo.SaveAll())
+                return Ok();
+
+            return BadRequest("Failed to like user");
         }
     }
 }
