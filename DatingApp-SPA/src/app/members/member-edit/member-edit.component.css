@@ -1,3 +1,6 @@
+.form-control {
+background-color: #FFF4FC;
+}
 .img-thumbnail {
     margin: 25px;
     width: 85%;
@@ -15,5 +18,6 @@
 }
 
 input[type=text] {
-        background: gainsboro;
+    background-color: #FFF4FC;
+
 }

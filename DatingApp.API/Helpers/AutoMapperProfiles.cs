@@ -16,10 +16,14 @@ namespace DatingApp.API.Helpers
             opt => opt.MapFrom(src => src.Photos.FirstOrDefault(p => p.IsMain).Url))
             .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.BirthDate.CalculateAge()));
             CreateMap<Photo, PhotosForDetailedDto>();
-            CreateMap<UserForUpdateDto,User>();
-            CreateMap<Photo,PhotoForReturnDto>();
-            CreateMap<PhotoForCreatingDto,Photo>();
+            CreateMap<UserForUpdateDto, User>();
+            CreateMap<Photo, PhotoForReturnDto>();
+            CreateMap<PhotoForCreatingDto, Photo>();
             CreateMap<UserForRegisterDto, User>();
+            CreateMap<MessageForCreationDto, Message>().ReverseMap();
+            CreateMap<Message, MessageToReturnDto>()
+                .ForMember(prm => prm.SenderPhotoUrl, opt => opt.MapFrom(p => p.Sender.Photos.FirstOrDefault(u => u.IsMain).Url))
+                .ForMember(prm => prm.RecipientPhotoUrl, opt => opt.MapFrom(p => p.Recipient.Photos.FirstOrDefault(u => u.IsMain).Url));
         }
     }
 }

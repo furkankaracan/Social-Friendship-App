@@ -3,7 +3,7 @@ import { AuthService } from '../_services/Auth.service';
 import { AlertifyService } from '../_services/alertify.service';
 import { FormGroup, Validators, FormBuilder} from '@angular/forms';
 import { BsDatepickerConfig, BsLocaleService, trLocale, defineLocale } from 'ngx-bootstrap';
-import { User } from '../_modules/user';
+import { User } from '../_models/user';
 import { Router } from '@angular/router';
 
 @Component({

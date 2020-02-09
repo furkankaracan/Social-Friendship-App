@@ -1,0 +1,67 @@
+<div class="card">
+  <div class="card-body">
+    <div *ngIf="messages?.length === 0">
+      No messages yet... Let's say hi!
+    </div>
+
+    <ul class="chat">
+      <li *ngFor="let message of messages">
+
+        <div style="margin-top:15px;" class="liste">
+          <div *ngIf="message.senderId == recipientId">
+
+            <span class="chat-img float-left">
+              <img src="{{message.senderPhotoUrl}}" alt="{{message.senderUserName}}" class="rounded-circle mr-2">
+            </span>
+
+            <div class="chat-body">
+              <div class="header">
+                <small class="text-muted">
+                  <span class="fa fa-clock-o">{{message.dateMessageSent | timeAgo}}</span>
+                </small>
+              </div>
+
+              <div class="contentRecipient">
+                <p>{{message.content}}</p>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="message.senderId != recipientId">
+
+            <span class="chat-img float-right">
+              <img src="{{message.senderPhotoUrl}}" alt="{{message.senderUserName}}" class="rounded-circle ml-2">
+            </span>
+
+            <div class="chat-body float-right">
+              <div class="header">
+                <small class="text-muted">
+                  <span [ngClass]="(message.isRead) ? 'fa fa-check-circle text-success':'fa fa-clock-o text-danger'"
+                    class="fa fa-clock-o">{{message.dateMessageSent | timeAgo}}</span>
+                </small>
+              </div>
+
+              <p>{{message.content}}</p>
+            </div>
+
+          </div>
+        </div>
+
+
+
+      </li>
+    </ul>
+  </div>
+
+  <div class="card-footer">
+    <form #messageForm="ngForm">
+      <div class="input-group">
+        <input type="text" name="content" required class="form-control input-sm" placeholder="send a private message">
+        <div class="input-group-append">
+          <button [disabled]="!messageForm.valid" class="btn btn-primary">Send</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>

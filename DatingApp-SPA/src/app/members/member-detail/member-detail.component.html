@@ -37,20 +37,19 @@
         <tabset class="member-tabset">
           <tab heading="About {{user.userName}}">
             <h4>Description</h4>
-            <p>{{user.introduction}}</p>
+            <p class="introduction">{{user.introduction}}</p>
             <h4>Looking For</h4>
-            <p>{{user.lookingFor}}</p>
+            <p class="lookingFor">{{user.lookingFor}}</p>
           </tab>
           <tab heading="Interests">
             <h4>Interests</h4>
-            <p>{{user.interests}}</p>
+            <p class="interests">{{user.interests}}</p>
           </tab>
           <tab heading="Photos">
             <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
           </tab>
           <tab heading="Messages">
-
-            <p>Messages</p>
+            <app-member-messages [recipientId]="user.id"></app-member-messages>
           </tab>
         </tabset>
       </div>
