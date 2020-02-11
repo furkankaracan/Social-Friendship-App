@@ -123,11 +123,11 @@ namespace DatingApp.API.Data
                             .AsQueryable();
 
             if (messageParams.MessageContainer == "Inbox")
-                messages = messages.Where(prm => prm.RecipientId == messageParams.UserId);
+                messages = messages.Where(prm => prm.RecipientId == messageParams.UserId && prm.RecipientDeleted == false);
             else if (messageParams.MessageContainer == "Outbox")
-                messages = messages.Where(prm => prm.SenderId == messageParams.UserId);
+                messages = messages.Where(prm => prm.SenderId == messageParams.UserId && prm.SenderDeleted == false);
             else
-                messages = messages.Where(prm => prm.RecipientId == messageParams.UserId && prm.IsRead == false);
+                messages = messages.Where(prm => prm.RecipientId == messageParams.UserId && prm.IsRead == false && prm.RecipientDeleted == false);
 
             messages = messages.OrderBy(prm => prm.DateMessageSent);
 
@@ -139,10 +139,11 @@ namespace DatingApp.API.Data
             var messages = await _context.Messages
                             .Include(prm => prm.Sender).ThenInclude(prm => prm.Photos)
                             .Include(prm => prm.Recipient).ThenInclude(prm => prm.Photos)
-                            .Where(prm => prm.RecipientId == userId 
-                                && prm.SenderId == recipientId 
-                                || prm.RecipientId == recipientId 
-                                && prm.SenderId == userId)
+                            .Where(prm => prm.RecipientId == userId
+                                && prm.RecipientDeleted == false
+                                && prm.SenderId == recipientId
+                                || prm.RecipientId == recipientId
+                                && prm.SenderId == userId && prm.SenderDeleted == false)
                             .OrderBy(prm => prm.DateMessageSent)
                             .ToListAsync();
 

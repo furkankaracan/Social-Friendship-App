@@ -7,7 +7,8 @@
     <ul class="chat">
       <li *ngFor="let message of messages">
 
-        <div style="margin-top:15px;" class="liste">
+        <div>
+
           <div *ngIf="message.senderId == recipientId">
 
             <span class="chat-img float-left">
@@ -29,25 +30,23 @@
 
           <div *ngIf="message.senderId != recipientId">
 
-            <span class="chat-img float-right">
-              <img src="{{message.senderPhotoUrl}}" alt="{{message.senderUserName}}" class="rounded-circle ml-2">
+            <span class="chat-img float-left">
+              <img src="{{message.senderPhotoUrl}}" alt="{{message.senderUserName}}" class="rounded-circle mr-2">
             </span>
 
-            <div class="chat-body float-right">
+            <div class="chat-body">
               <div class="header">
                 <small class="text-muted">
                   <span [ngClass]="(message.isRead) ? 'fa fa-check-circle text-success':'fa fa-clock-o text-danger'"
                     class="fa fa-clock-o">{{message.dateMessageSent | timeAgo}}</span>
                 </small>
+                <p>{{message.content}}</p>
               </div>
 
-              <p>{{message.content}}</p>
             </div>
 
           </div>
         </div>
-
-
 
       </li>
     </ul>
@@ -56,12 +55,8 @@
   <div class="card-footer">
     <form #messageForm="ngForm" (ngSubmit)="messageForm.valid && sendMessage()">
       <div class="input-group">
-        <input type="text"
-        [(ngModel)]="newMessage.content"
-        name="content"
-        required
-        class="form-control input-sm"
-        placeholder="send a private message">
+        <input type="text" [(ngModel)]="newMessage.content" name="content" required class="form-control input-sm"
+          placeholder="send a private message">
         <div class="input-group-append">
           <button [disabled]="!messageForm.valid" class="btn btn-primary">Send</button>
         </div>
