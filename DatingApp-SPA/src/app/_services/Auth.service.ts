@@ -26,6 +26,7 @@ export class AuthService {
   login(model: any) {
     return this.http.post(this.baseUrl + 'login', model).pipe(
       map((response: any) => {
+        console.log(response);
         const loginResponse = response;
 
         if (loginResponse) {

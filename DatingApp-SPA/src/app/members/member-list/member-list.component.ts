@@ -47,6 +47,8 @@ export class MemberListComponent implements OnInit {
   loadUsers() {
     this.userService.getUsers(this.pagination.currentPage, this.pagination.itemsPerPage, this.userParams)
     .subscribe((res: PaginatedResult<User[]>) => {
+      // tslint:disable-next-line: no-debugger
+      debugger;
       this.users = res.result;
       this.pagination = res.pagination;
     }, error => {

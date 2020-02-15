@@ -22,6 +22,7 @@ photoUrl: string;
     this.authService.login(this.model).subscribe(next => {
      this.alertify.success('Logged in successfully');
     }, error => {
+      console.log(error);
       this.alertify.error(error);
   }, () => {
     this.router.navigate(['/members']);

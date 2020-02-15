@@ -20,19 +20,22 @@ namespace DatingApp.API.Helpers
             var paginationHeader = new PaginationHeader(currentPage, itemsPerPage, totalItems, totalPages);
             var camelCaseFormatter = new JsonSerializerSettings();
             camelCaseFormatter.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            response.Headers.Add("Pagination",JsonConvert.SerializeObject(paginationHeader,camelCaseFormatter));
+            response.Headers.Add("Pagination", JsonConvert.SerializeObject(paginationHeader, camelCaseFormatter));
             response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
         }
 
 
-        public static int CalculateAge(this DateTime birthDate)
+        public static int CalculateAge(this DateTime? birthDate)
         {
-            var age = DateTime.Today.Year - birthDate.Year;
-            if (birthDate.AddYears(age) > DateTime.Today)
-                age--;
-            return age;
+            if (birthDate.HasValue)
+            {
+                var age = DateTime.Today.Year - birthDate.Value.Year;
+                if (birthDate.Value.AddYears(age) > DateTime.Today)
+                    age--;
+                return age;
+            }
+            return 0;
+
         }
-
-
     }
 }

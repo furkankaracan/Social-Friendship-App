@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using DatingApp.API.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -14,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using DatingApp.API.Helpers;
 using DatingApp.API.Data.Repositories;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace DatingApp.API
 {
@@ -26,7 +26,23 @@ namespace DatingApp.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureDevelopmentServices(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>(prm => prm.UseMySql
+                        (Configuration.GetConnectionString("DefaultConnection")));
+
+            ConfigureServices(services);
+
+        }
+
+        public void ConfigureProductionServices(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>(prm => prm.UseMySql
+                        (Configuration.GetConnectionString("DefaultConnection")));
+
+            ConfigureServices(services);
+
+        }
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(prm => prm.UseSqlite
@@ -36,8 +52,8 @@ namespace DatingApp.API
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
             services.AddCors();
-            services.AddScoped<LogUserActivity>();
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
+            services.AddScoped<LogUserActivity>();
             services.AddAutoMapper(typeof(DatingRepository).Assembly);
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IDatingRepository, DatingRepository>();
@@ -80,16 +96,16 @@ namespace DatingApp.API
 
             //app.UseHttpsRedirection();
 
-            app.UseRouting();
-
             app.UseCors(prm => prm.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }
