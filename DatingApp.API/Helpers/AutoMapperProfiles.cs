@@ -11,8 +11,7 @@ namespace DatingApp.API.Helpers
         {
             CreateMap<User, UserForListDto>().ForMember(dest => dest.PhotoUrl,
             opt => opt.MapFrom(src => src.Photos.FirstOrDefault(p => p.IsMain).Url))
-            .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.BirthDate.CalculateAge()))
-            .ForMember(dest => dest.Likes, opt => opt.MapFrom(src => src.Likers.FirstOrDefault()));
+            .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.BirthDate.CalculateAge()));
             CreateMap<User, UserForDetailedDto>().ForMember(dest => dest.PhotoUrl,
             opt => opt.MapFrom(src => src.Photos.FirstOrDefault(p => p.IsMain).Url))
             .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.BirthDate.CalculateAge()));

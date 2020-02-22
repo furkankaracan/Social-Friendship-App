@@ -28,8 +28,10 @@ namespace DatingApp.API
 
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(prm => prm.UseMySql
-                        (Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<DataContext>(prm => {
+                prm.UseLazyLoadingProxies();
+                prm.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
+                });
 
             ConfigureServices(services);
 
@@ -37,8 +39,11 @@ namespace DatingApp.API
 
         public void ConfigureProductionServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(prm => prm.UseMySql
-                        (Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<DataContext>(prm => {
+                prm.UseLazyLoadingProxies();
+                prm.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
+                });
+
 
             ConfigureServices(services);
 
